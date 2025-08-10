@@ -1,0 +1,77 @@
+<div class="card p-4 mx-auto" style="max-width:600px">
+  <h3 class="mb-3">Nuevo Producto</h3>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" enctype="multipart/form-data">
+    <!-- Nombre -->
+    <div class="mb-3">
+      <label class="form-label">Nombre</label>
+      <input type="text" class="form-control"
+             formControlName="name"
+             [class.is-invalid]="form.controls.name.invalid && form.controls.name.touched">
+      <div *ngIf="form.controls.name.invalid && form.controls.name.touched"
+           class="invalid-feedback">
+        El nombre es requerido.
+      </div>
+    </div>
+
+    <!-- Descripción -->
+    <div class="mb-3">
+      <label class="form-label">Descripción</label>
+      <textarea class="form-control" rows="3" formControlName="description"></textarea>
+    </div>
+
+    <!-- Precio -->
+    <div class="mb-3">
+      <label class="form-label">Precio</label>
+      <input type="number" class="form-control"
+             formControlName="price"
+             [class.is-invalid]="form.controls.price.invalid && form.controls.price.touched">
+      <div *ngIf="form.controls.price.invalid && form.controls.price.touched"
+           class="invalid-feedback">
+        Precio inválido.
+      </div>
+    </div>
+
+    <!-- Stock -->
+    <div class="mb-3">
+      <label class="form-label">Stock</label>
+      <input type="number" class="form-control"
+             formControlName="stock"
+             [class.is-invalid]="form.controls.stock.invalid && form.controls.stock.touched">
+      <div *ngIf="form.controls.stock.invalid && form.controls.stock.touched"
+           class="invalid-feedback">
+        Stock inválido.
+      </div>
+    </div>
+
+    <!-- Categoría -->
+    <div class="mb-3">
+      <label class="form-label">Categoría</label>
+      <select class="form-select"
+              formControlName="categoryId"
+              [class.is-invalid]="form.controls.categoryId.invalid && form.controls.categoryId.touched">
+        <option value="" disabled>-- Selecciona una categoría --</option>
+        <option *ngFor="let cat of categories" [value]="cat.id">
+          {{ cat.name }}
+        </option>
+      </select>
+      <div *ngIf="form.controls.categoryId.invalid && form.controls.categoryId.touched"
+           class="invalid-feedback">
+        Debes seleccionar una categoría.
+      </div>
+    </div>
+
+    <!-- Imagen -->
+    <div class="mb-3">
+      <label class="form-label">Imagen (opcional)</label>
+      <input type="file" class="form-control" (change)="onFileChange($event)">
+    </div>
+
+    <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+    <button class="btn btn-primary" type="submit" [disabled]="submitting || form.invalid">
+      {{ submitting ? 'Guardando…' : 'Guardar' }}
+    </button>
+    <a routerLink="/products" class="btn btn-link">Cancelar</a>
+  </form>
+</div>

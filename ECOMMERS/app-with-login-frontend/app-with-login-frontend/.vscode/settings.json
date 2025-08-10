@@ -1,0 +1,6 @@
+{
+  // Desactiva únicamente las decoraciones de deprecated en archivos HTML
+  "[html]": {
+    "editor.showDeprecated": false
+  }
+}

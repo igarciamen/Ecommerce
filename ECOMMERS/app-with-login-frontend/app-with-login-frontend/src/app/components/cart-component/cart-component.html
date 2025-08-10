@@ -1,0 +1,48 @@
+<div class="container mt-4">
+  <h2>Tu Carrito</h2>
+  <button class="btn btn-sm btn-danger mb-3" (click)="clear()">Vaciar carrito</button>
+
+  <div *ngIf="loading">Cargando…</div>
+  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+  <table *ngIf="!loading && items.length" class="table">
+    <thead>
+      <tr>
+        <th>Producto</th>
+        <th>Cantidad</th>
+        <th>Acción</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let it of items">
+        <td>{{ it.product?.name || ('#' + it.productId) }}</td>
+        <td>
+          <!-- Usa una ref local para evitar el error de $event.target y null -->
+          <input
+            #qtyInput
+            type="number"
+            [value]="it.quantity"
+            min="1"
+            (change)="update(it, qtyInput.valueAsNumber)"
+          />
+          <!-- Alternativa si prefieres $event:
+          (change)="update(it, $any($event.target).valueAsNumber)"
+          -->
+        </td>
+        <td>
+          <button class="btn btn-sm btn-danger" (click)="update(it, 0)">
+            Eliminar
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p *ngIf="!loading && !items.length">No hay artículos en el carrito.</p>
+
+  <div *ngIf="items.length" class="mt-3">
+    <button class="btn btn-success" (click)="checkout()">
+      Finalizar Pedido
+    </button>
+  </div>
+</div>

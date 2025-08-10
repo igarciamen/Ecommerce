@@ -1,0 +1,32 @@
+<div class="container mt-4">
+  <h3>Mis Pedidos</h3>
+
+  <div *ngIf="loading" class="my-3">Cargando pedidos…</div>
+  <div *ngIf="!loading && error" class="alert alert-danger">{{ error }}</div>
+
+  <table *ngIf="!loading && !error && orders.length" class="table table-striped">
+    <thead>
+      <tr>
+        <th>Id pedido</th>
+        <th>Fecha</th>
+        <th>Total (€)</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let o of orders">
+        <td>{{ o.id }}</td>
+        <td>{{ o.createdAt | date:'medium' }}</td>
+        <td>{{ o.totalAmount | number:'1.2-2' }}</td>
+        <td>
+          <a [routerLink]="['/orders', o.id]" class="btn btn-sm btn-primary me-2">Ver</a>
+          <button class="btn btn-sm btn-danger" (click)="delete(o)">Borrar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="!loading && !error && !orders.length" class="alert alert-info">
+    No tienes pedidos aún.
+  </div>
+</div>

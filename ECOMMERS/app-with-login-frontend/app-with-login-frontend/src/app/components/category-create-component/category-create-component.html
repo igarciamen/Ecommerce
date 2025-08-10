@@ -1,0 +1,30 @@
+<!-- src/app/components/category-create/category-create.component.html -->
+<div class="card p-4 mx-auto" style="max-width:400px">
+  <h3 class="mb-3">Nueva Categoría</h3>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="mb-3">
+      <label for="name" class="form-label">Nombre</label>
+      <input
+        id="name"
+        type="text"
+        class="form-control"
+        formControlName="name"
+        [class.is-invalid]="form.controls.name.touched && form.controls.name.invalid"
+      />
+      <div class="invalid-feedback" *ngIf="form.controls.name.touched && form.controls.name.hasError('required')">
+        El nombre es requerido
+      </div>
+      <div class="invalid-feedback" *ngIf="form.controls.name.touched && form.controls.name.hasError('minlength')">
+        Mínimo 2 caracteres
+      </div>
+    </div>
+
+    <button class="btn btn-primary" type="submit" [disabled]="submitting || form.invalid">
+      {{ submitting ? 'Guardando…' : 'Guardar' }}
+    </button>
+    <a routerLink="/categories" class="btn btn-link">Cancelar</a>
+  </form>
+
+  <div class="alert alert-danger mt-3" *ngIf="error">{{ error }}</div>
+</div>

@@ -1,0 +1,147 @@
+<div class="container py-4" *ngIf="order as o; else loadingTpl">
+  <div class="d-flex align-items-center mb-3">
+    <div>
+      <h3 class="mb-0">Pedido #{{ o.id }}</h3>
+      <small class="text-muted">Fecha: {{ o.createdAt | date:'medium' }}</small>
+    </div>
+    <span class="badge text-bg-secondary ms-auto">Procesando</span>
+  </div>
+
+  <div class="row g-4">
+    <!-- Artículos -->
+    <div class="col-12 col-lg-8">
+      <div class="card shadow-sm">
+        <div class="card-header d-flex align-items-center">
+          <h5 class="mb-0">Artículos ({{ o.items.length }})</h5>
+        </div>
+
+        <div class="list-group list-group-flush">
+          <div class="list-group-item py-3" *ngFor="let i of o.items">
+            <div class="d-flex gap-3 align-items-start">
+              <div class="flex-grow-1">
+                <div class="d-flex align-items-center">
+                  <h6 class="mb-0">
+                    {{ i.productName || ('Producto #' + i.productId) }}
+                  </h6>
+                  <span class="ms-2 badge text-bg-light">x{{ i.quantity }}</span>
+                </div>
+
+                <div class="text-muted small mt-1">
+                  Vendedor:
+                  <strong>{{ i.product?.seller?.username || 'Desconocido' }}</strong>
+                  <span *ngIf="i.product?.seller?.email" class="ms-1"> · {{ i.product?.seller?.email }}</span>
+                </div>
+
+                <div class="mt-2 d-flex flex-wrap gap-2">
+                  <span class="badge text-bg-info">Precio unit.: {{ (i.unitPrice ?? 0) | number:'1.2-2' }} €</span>
+                  <span class="badge text-bg-primary">Subtotal: {{ (i.quantity * (i.unitPrice ?? 0)) | number:'1.2-2' }} €</span>
+
+                  <button type="button" class="btn btn-sm btn-outline-secondary ms-auto" (click)="contactSeller(i)">
+                    Contactar vendedor
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="list-group-item">
+            <div class="d-flex justify-content-end">
+              <div class="text-end">
+                <div class="small text-muted">Envío</div>
+                <div class="fw-semibold">0,00 €</div>
+              </div>
+              <div class="vr mx-3"></div>
+              <div class="text-end">
+                <div class="small text-muted">Total</div>
+                <div class="fs-5 fw-bold">{{ o.totalAmount | number:'1.2-2' }} €</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-footer bg-transparent">
+          <a routerLink="/orders" class="btn btn-link px-0">← Volver al listado</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resumen + pago -->
+    <div class="col-12 col-lg-4">
+      <div class="card shadow-sm mb-4">
+        <div class="card-header"><h5 class="mb-0">Resumen</h5></div>
+        <div class="card-body">
+          <div class="d-flex justify-content-between mb-2">
+            <span class="text-muted">Artículos</span>
+            <span>{{ itemsSubtotal | number:'1.2-2' }} €</span>
+          </div>
+          <div class="d-flex justify-content-between mb-2">
+            <span class="text-muted">Envío</span>
+            <span>0,00 €</span>
+          </div>
+          <hr>
+          <div class="d-flex justify-content-between align-items-center">
+            <span class="fw-semibold">Total</span>
+            <span class="fs-5 fw-bold">{{ o.totalAmount | number:'1.2-2' }} €</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card shadow-sm">
+        <div class="card-header"><h5 class="mb-0">Pago seguro</h5></div>
+        <div class="card-body">
+          <form #payForm="ngForm" (ngSubmit)="onPay(payForm)" novalidate>
+            <div class="mb-3">
+              <label class="form-label">Titular de la tarjeta</label>
+              <input name="cardHolder" class="form-control" required minlength="3" ngModel>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Número de tarjeta</label>
+              <input name="cardNumber" class="form-control" inputmode="numeric" autocomplete="cc-number"
+                     placeholder="4242 4242 4242 4242" pattern="^[0-9 ]{12,23}$" required ngModel>
+            </div>
+
+            <div class="row g-3">
+              <div class="col-6">
+                <label class="form-label">Caducidad (MM/AA)</label>
+                <input name="expiry" class="form-control" placeholder="MM/AA"
+                       pattern="^(0[1-9]|1[0-2])\/?([0-9]{2})$" required ngModel>
+              </div>
+              <div class="col-6">
+                <label class="form-label">CVC</label>
+                <input name="cvc" class="form-control" inputmode="numeric" maxlength="4"
+                       pattern="^[0-9]{3,4}$" required ngModel>
+              </div>
+            </div>
+
+            <div class="mt-3">
+              <label class="form-label">Dirección de facturación (opcional)</label>
+              <input name="billingAddress" class="form-control" placeholder="Calle, nº, ciudad" ngModel>
+            </div>
+
+            <div class="form-check mt-3">
+              <input class="form-check-input" type="checkbox" id="saveCard" name="saveCard" ngModel>
+              <label class="form-check-label" for="saveCard">Guardar tarjeta para futuras compras</label>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 mt-3" [disabled]="loading">
+              {{ loading ? 'Procesando…' : 'Pagar ahora' }}
+            </button>
+
+            <div class="text-danger small mt-2" *ngIf="error">{{ error }}</div>
+          </form>
+        </div>
+        <div class="card-footer text-center small text-muted">
+          <i class="bi bi-lock"></i> Pagos cifrados y seguros
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #loadingTpl>
+  <div class="container py-5">
+    <div *ngIf="loading" class="text-muted">Cargando pedido…</div>
+    <div *ngIf="error" class="alert alert-danger mt-3">{{ error }}</div>
+  </div>
+</ng-template>

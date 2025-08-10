@@ -1,0 +1,88 @@
+<!-- src/app/components/signup/signup.html -->
+<div class="container mt-5" style="max-width: 500px;">
+  <h2 class="mb-4 text-center">Registro</h2>
+
+
+
+  <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+    <!-- Username -->
+    <div class="mb-3">
+      <label class="form-label">Username</label>
+      <input
+        type="text"
+        class="form-control"
+        formControlName="username"
+        [ngClass]="{'is-invalid': username?.touched && username?.invalid}"
+      />
+      <div *ngIf="username?.touched && username?.invalid" class="invalid-feedback">
+        <div *ngIf="username?.errors?.['required']">El nombre de usuario es requerido.</div>
+      </div>
+    </div>
+
+    <!-- Email -->
+    <div class="mb-3">
+      <label class="form-label">Email</label>
+      <input
+        type="email"
+        class="form-control"
+        formControlName="email"
+        [ngClass]="{'is-invalid': email?.touched && email?.invalid}"
+      />
+      <div *ngIf="email?.touched && email?.invalid" class="invalid-feedback">
+        <div *ngIf="email?.errors?.['required']">El email es requerido.</div>
+        <div *ngIf="email?.errors?.['email']">Formato de email no válido.</div>
+      </div>
+    </div>
+
+    <!-- Password -->
+    <div class="mb-3">
+      <label class="form-label">Contraseña</label>
+      <input
+        type="password"
+        class="form-control"
+        formControlName="password"
+        [ngClass]="{'is-invalid': password?.touched && password?.invalid}"
+      />
+      <div *ngIf="password?.touched && password?.invalid" class="invalid-feedback">
+        <div *ngIf="password?.errors?.['required']">La contraseña es requerida.</div>
+        <div *ngIf="password?.errors?.['minlength']">
+          Mínimo {{ password?.errors?.['minlength'].requiredLength }} caracteres.
+        </div>
+      </div>
+    </div>
+
+    <!-- Confirm Password -->
+    <div class="mb-3">
+      <label class="form-label">Confirmar contraseña</label>
+      <input
+        type="password"
+        class="form-control"
+        formControlName="confirmPassword"
+        [ngClass]="{'is-invalid':
+          (confirmPassword?.touched && confirmPassword?.invalid) ||
+          (signupForm.errors?.['passwordsMismatch'] && confirmPassword?.touched)
+        }"
+      />
+      <div *ngIf="confirmPassword?.touched && confirmPassword?.invalid" class="invalid-feedback">
+        Debes confirmar la contraseña.
+      </div>
+      <div *ngIf="signupForm.errors?.['passwordsMismatch'] && confirmPassword?.touched" class="invalid-feedback">
+        Las contraseñas no coinciden.
+      </div>
+    </div>
+
+    <!-- Error general -->
+    <div *ngIf="errorMessage" class="alert alert-danger text-center">
+      {{ errorMessage }}
+    </div>
+
+    <!-- Submit -->
+    <button type="submit"
+            class="btn btn-primary w-100"
+            [disabled]="signupForm.invalid || loading">
+      <span *ngIf="!loading">Registrarse</span>
+      <span *ngIf="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+      <span *ngIf="loading"> Registrando...</span>
+    </button>
+  </form>
+</div>

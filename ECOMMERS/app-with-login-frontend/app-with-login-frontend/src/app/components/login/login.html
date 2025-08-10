@@ -1,0 +1,50 @@
+<!-- src/app/components/login/login.html -->
+<div class="container mt-5" style="max-width: 400px;">
+  <h2 class="mb-4 text-center">Iniciar Sesión</h2>
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <!-- Usuario o Email -->
+    <div class="mb-3">
+      <label class="form-label">Usuario o Email</label>
+      <input
+        type="text"
+        class="form-control"
+        formControlName="login"
+        [ngClass]="{'is-invalid': login?.touched && login?.invalid}"
+      />
+      <div *ngIf="login?.touched && login?.invalid" class="invalid-feedback">
+        El campo es requerido.
+      </div>
+    </div>
+
+    <!-- Contraseña -->
+    <div class="mb-3">
+      <label class="form-label">Contraseña</label>
+      <input
+        type="password"
+        class="form-control"
+        formControlName="password"
+        [ngClass]="{'is-invalid': password?.touched && password?.invalid}"
+      />
+      <div *ngIf="password?.touched && password?.invalid" class="invalid-feedback">
+        <div *ngIf="password?.errors?.['required']">La contraseña es requerida.</div>
+        <div *ngIf="password?.errors?.['minlength']">
+          Mínimo {{ password?.errors?.['minlength'].requiredLength }} caracteres.
+        </div>
+      </div>
+    </div>
+
+    <!-- Error general -->
+    <div *ngIf="errorMessage" class="alert alert-danger">
+      {{ errorMessage }}
+    </div>
+
+    <!-- Submit -->
+    <button type="submit"
+            class="btn btn-success w-100"
+            [disabled]="loginForm.invalid || loading">
+      <span *ngIf="!loading">Entrar</span>
+      <span *ngIf="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+      <span *ngIf="loading"> Validando...</span>
+    </button>
+  </form>
+</div>

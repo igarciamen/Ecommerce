@@ -1,0 +1,78 @@
+<!-- src/app/components/product-list/product-list-component.html -->
+<div class="pl-container">
+  <h2 class="pl-title">Nuestros Productos</h2>
+
+  <p class="text-muted mb-3">
+    {{ totalElements }} {{ totalElements === 1 ? 'resultado' : 'resultados' }}
+    <span *ngIf="categoryName"> en categoría "{{ categoryName }}"</span>
+    <span *ngIf="!categoryName && currentTerm"> para "{{ currentTerm }}"</span>
+  </p>
+
+  <div class="pl-grid">
+    <div class="pl-card" *ngFor="let p of products">
+      <div class="pl-image-wrapper">
+        <a [routerLink]="['/products', p.id]" [state]="{ quantity: quantityMap[p.id] }">
+          <img *ngIf="p.imageUrl"
+               [src]="'http://localhost:8082/uploads/' + p.imageUrl"
+               [alt]="p.name"
+               class="pl-img" />
+        </a>
+      </div>
+
+      <div class="pl-body">
+        <h3 class="pl-name">
+          <a [routerLink]="['/products', p.id]" class="pl-link">
+            {{ p.name }}
+          </a>
+        </h3>
+        <p class="pl-desc">{{ p.description }}</p>
+
+        <ul class="pl-meta">
+          <li><strong>Vendedor:</strong> {{ p.sellerName }}</li>
+          <li><strong>Fecha:</strong> {{ p.createdAt | date:'short' }}</li>
+          <li>
+            <strong>Stock:</strong>
+            <span [class.text-success]="p.stock > 0" [class.text-danger]="p.stock === 0">
+              {{ p.stock > 0 ? p.stock : '0 (Sin stock)' }}
+            </span>
+          </li>
+        </ul>
+
+        <div class="pl-qty">
+          <label class="pl-qty-label">Unidades</label>
+          <button type="button"
+                  (click)="onQuantityChange(p.id, quantityMap[p.id] - 1)"
+                  [disabled]="p.stock === 0">–</button>
+
+          <input type="number"
+                 [min]="1"
+                 [max]="p.stock"
+                 [(ngModel)]="quantityMap[p.id]"
+                 (ngModelChange)="onQuantityChange(p.id, $event)"
+                 [disabled]="p.stock === 0" />
+
+          <button type="button"
+                  (click)="onQuantityChange(p.id, quantityMap[p.id] + 1)"
+                  [disabled]="p.stock === 0">+</button>
+        </div>
+
+        <div class="pl-footer">
+          <span class="pl-price">{{ p.price | currency }}</span>
+
+          <button class="pl-add-cart"
+                  type="button"
+                  (click)="addToCart(p, quantityMap[p.id])"
+                  [disabled]="p.stock === 0">
+            {{ p.stock === 0 ? 'Agotado' : 'Añadir al carrito' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="pl-loading">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Cargando…</span>
+    </div>
+  </div>
+</div>

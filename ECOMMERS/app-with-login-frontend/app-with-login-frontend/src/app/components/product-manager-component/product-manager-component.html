@@ -1,0 +1,36 @@
+<!-- src/app/components/product-manager/product-manager.component.html -->
+<div class="container mt-4">
+  <h2>Mis Productos</h2>
+  <div *ngIf="loading">Cargando…</div>
+  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+  <table *ngIf="!loading && !error" class="table table-striped">
+    <thead>
+      <tr>
+        <th>Imagen</th><th>Nombre</th><th>Precio</th><th>Stock</th><th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let p of products">
+        <td>
+          <img *ngIf="p.imageUrl"
+               [src]="'http://localhost:8082/uploads/'+p.imageUrl"
+               alt="{{p.name}}"
+               width="50">
+        </td>
+        <td>{{ p.name }}</td>
+        <td>{{ p.price | currency }}</td>
+        <td>{{ p.stock }}</td>
+        <td>
+          <button class="btn btn-sm btn-primary me-2"
+                  (click)="onEdit(p)">
+            Editar
+          </button>
+          <button class="btn btn-sm btn-danger"
+                  (click)="onDelete(p.id)">
+            Eliminar
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

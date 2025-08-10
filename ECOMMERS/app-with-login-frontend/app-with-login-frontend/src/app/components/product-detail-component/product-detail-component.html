@@ -1,0 +1,47 @@
+<!-- src/app/components/product-detail-component/product-detail-component.html -->
+<div class="container-fluid">
+  <ng-container *ngIf="product; else loadingTpl">
+    <div class="row">
+      <div class="col-md-6">
+        <img *ngIf="product.imageUrl"
+             [src]="'http://localhost:8082/uploads/' + product.imageUrl"
+             [alt]="product.name"
+             class="img-fluid border rounded" />
+      </div>
+
+      <div class="col-md-6">
+        <h2>{{ product.name }}</h2>
+        <h4 class="text-danger">{{ product.price | currency:'EUR' }}</h4>
+        <p>{{ product.description }}</p>
+
+        <p>
+          <strong>Stock:</strong>
+          <span [class.text-success]="product.stock > 0"
+                [class.text-danger]="product.stock === 0">
+            {{ product.stock > 0 ? product.stock : '0 (Agotado)' }}
+          </span>
+        </p>
+
+        <div class="d-flex align-items-center my-3">
+          <input type="number"
+                 class="form-control w-auto me-2"
+                 [(ngModel)]="quantity"
+                 [min]="1"
+                 [max]="product.stock"
+                 [disabled]="product.stock === 0" />
+
+          <button class="btn btn-primary"
+                  (click)="addToCart()"
+                  [disabled]="product.stock === 0">
+            {{ product.stock === 0 ? 'Agotado' : 'Añadir al carrito' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-template #loadingTpl>
+    <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+    <div *ngIf="!error" class="text-center mt-4">Cargando producto…</div>
+  </ng-template>
+</div>

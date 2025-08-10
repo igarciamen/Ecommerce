@@ -1,0 +1,187 @@
+<!-- src/app/app.component.html -->
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <!-- Marca -->
+    <a class="navbar-brand" routerLink="/">MyApp</a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <!-- Enlaces de navegación -->
+      <ul class="navbar-nav  mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            routerLink="/products"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            Home
+          </a>
+        </li>
+        <li class="nav-item ps-3 mb-1" 
+    *ngIf="auth.hasRole('ROLE_ADMIN') || auth.hasRole('ROLE_SELLER')">
+      <a routerLink="/categories/new" class="nav-link ">+ Nueva Categoría</a>
+    </li>
+     <!-- Dropdown de Categorías -->
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            id="categoriesDropdown"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            Categorías
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="categoriesDropdown">
+            <!-- Cada categoría -->
+            <li *ngFor="let cat of categories">
+              <a
+                class="dropdown-item"
+                [routerLink]="['/products']"
+                [queryParams]="{ categoryId: cat.id }"
+              >
+                {{ cat.name }}
+              </a>
+            </li>
+            <li><hr class="dropdown-divider" /></li>
+            <li>
+              <a class="dropdown-item" routerLink="/categories">
+                Todas las categorías
+              </a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+<!-- src/app/app.component.html -->
+<div class="d-flex mx-auto" role="search">
+  <input
+     class="form-control me-2"
+  type="search"
+  placeholder="Search"
+  aria-label="Search"
+  [(ngModel)]="searchTerm"
+  (keyup)="onSearch(searchTerm)"
+  (search)="onSearch(searchTerm)"
+  />
+</div>
+      <!-- Acciones de usuario -->
+      <ul class="navbar-nav mb-2 mb-lg-0">
+<li class="nav-item ps-3 mb-1"
+    *ngIf="auth.hasRole('ROLE_ADMIN') || auth.hasRole('ROLE_SELLER')">
+  <a routerLink="/products/new" class="nav-link">+ Nuevo Producto</a>
+</li>
+<!-- Añade este -->
+<li class="nav-item ps-3 mb-1"
+    *ngIf="auth.hasRole('ROLE_ADMIN') || auth.hasRole('ROLE_SELLER')">
+  <!-- Aquí apuntas a tu gestor de productos -->
+  <a routerLink="/products/manage" class="nav-link">
+    Mis Productos
+  </a>
+</li>
+ <!-- 🚀 CARRITO: icono y contador -->
+        <li class="nav-item">
+          <a class="nav-link position-relative" routerLink="/cart">
+                🛒 Cart
+            <span
+              class="badge bg-danger position-absolute top-0 start-100 translate-middle"
+              *ngIf="(cartCount$ | async) as c"
+            >
+              {{ c }}
+            </span>
+          </a>
+        </li>
+          <!-- 🚀 Mis Pedidos -->
+      <li class="nav-item"
+    *ngIf="auth.hasRole('ROLE_ADMIN') || auth.hasRole('ROLE_SELLER')">
+        <a
+          class="nav-link"
+          routerLink="/orders"
+          routerLinkActive="active"
+        >
+          Mis Pedidos
+        </a>
+      </li>
+        <!-- Si NO estás logueado -->
+        <li
+          class="nav-item"
+          *ngIf="!auth.isAuthenticated()"
+        >
+          <a
+            class="nav-link"
+            routerLink="/login"
+            routerLinkActive="active"
+          >
+            Login
+          </a>
+        </li>
+        <li
+          class="nav-item"
+          *ngIf="!auth.isAuthenticated()"
+        >
+          <a
+            class="nav-link"
+            routerLink="/signup"
+            routerLinkActive="active"
+          >
+            Signup
+          </a>
+        </li>
+
+        <!-- Si SÍ estás logueado -->
+        <li
+          class="nav-item dropdown"
+          *ngIf="auth.isAuthenticated()"
+        >
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+                      <!-- async pipe: se mostrará al emitir userInfo$ -->
+            {{ username$ | async }}
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li>
+              <a
+                class="dropdown-item"
+                routerLink="/dashboard"
+              >
+                Dashboard
+              </a>
+            </li>
+            <li><hr class="dropdown-divider" /></li>
+           <li>
+  <a
+    class="dropdown-item"
+    style="cursor: pointer;"
+    (click)="onLogout($event)"
+  >
+    Logout
+  </a>
+</li>
+          </ul>
+        </li>
+      </ul>
+      
+    </div>
+  </div>
+</nav>
+<div class="container-fluid">
+<router-outlet></router-outlet>
+</div>
+
+
